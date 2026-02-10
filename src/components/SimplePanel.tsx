@@ -27,17 +27,7 @@ const getStyles = () => {
   };
 };
 
-  //Click handler para realizar un zoom a la barra clickeada
-const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvas = canvasRef.current;
-  if (!canvas) return;
 
-  const rect = canvas.getBoundingClientRect();
-
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-};
 
 export const SimplePanel: React.FC<Props> = ({ data, width, height }) => {
   const series = data.series[0];
@@ -54,6 +44,22 @@ export const SimplePanel: React.FC<Props> = ({ data, width, height }) => {
       values.push(v);
     }
   }
+
+    //Click handler para realizar un zoom a la barra clickeada
+  const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+
+    const barWidth = width / values.length;
+    const index = Math.floor(x / barWidth);
+
+    if (index >= 0 && index < values.length) {
+    }
+  };
 
   return (
     <BarCanvas
