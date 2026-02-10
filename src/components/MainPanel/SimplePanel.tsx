@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { PanelProps } from '@grafana/data';
-import { SimpleOptions } from 'types';
+import { PanelOptions } from 'types';
 import { css, cx } from '@emotion/css';
 import { FieldType } from '@grafana/data';
-import { BarCanvas } from './BarGraph';
+import { BarCanvas } from '../BarGraph';
 
-interface Props extends PanelProps<SimpleOptions> {}
+interface Props extends PanelProps<PanelOptions> {}
 
 const getStyles = () => {
   return {

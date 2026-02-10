@@ -7,7 +7,6 @@ interface Props {
 }
 
 
-
 export function BarCanvas({ values, width, height, onClick }: Props & { onClick?: (event: React.MouseEvent<HTMLCanvasElement>) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
