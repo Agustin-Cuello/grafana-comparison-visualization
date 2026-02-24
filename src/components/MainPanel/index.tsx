@@ -1,1 +1,1 @@
-export * from './SimplePanel';
+export * from './Overview';
