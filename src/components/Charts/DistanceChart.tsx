@@ -1,15 +1,18 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
+import { LateColor, EarlyColor, OnTimeColor, LineColor } from '../Colors';
 
 interface Props {
-  ReferenceSeries: Array<[number, number]>; // [time, value]
-  Difference: Array<[number, number]>;
+  Difference: Array<[number, number, number]>;
   height: number;
   width: number;
 }
 
 export default function DistanceChart({ Difference, height }: Props) {
   const option = {
+    dataset:{
+        source: Difference
+    },
     tooltip: {
       trigger: 'axis',
     },
@@ -17,28 +20,42 @@ export default function DistanceChart({ Difference, height }: Props) {
       data: ['Difference'],
     },
     xAxis: {
+      name: 'Time',
       type: 'value',
+      nameLocation: 'middle',
     },
     yAxis: {
+      name: 'Distance',
       type: 'value',
+      nameLocation: 'middle',
     },
-    dataZoom: [
-      {
-        type: 'inside',
-        throttle: 50,
-      },
-      {
-        type: 'slider',
-      },
-    ],
+    visualMap: {
+        seriesIndex: 0,
+        orient: 'horizontal',
+        left: 'right',
+        min: -1,
+        max: 1,
+        text: ['Early','Late'],
+        dimension: 2,
+        inRange: {
+            color: [LateColor, OnTimeColor, EarlyColor]
+        }
+    },
     series: [
+      {
+        type: 'bar',
+        encode: {
+          x: 'index',
+          y: 'distance'
+        },
+        animation: false,
+      },
       {
         name: 'Difference',
         type: 'line',
         showSymbol: false,
-        data: Difference,
         smooth: false,
-        areaStyle: {},
+        color: LineColor,
       },
     ],
   };
