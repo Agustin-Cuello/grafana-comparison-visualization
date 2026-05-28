@@ -1,14 +1,9 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
 import { LateColor, EarlyColor, OnTimeColor, LineColor } from '../Colors';
+import { DistanceProps } from '../../types';
 
-interface Props {
-  Difference: Array<[number, number, number]>;
-  height: number;
-  width: number;
-}
-
-export default function DistanceChart({ Difference, height }: Props) {
+export default function DistanceChart({ Difference, height }: DistanceProps) {
   const option = {
     dataset:{
         source: Difference
@@ -23,6 +18,8 @@ export default function DistanceChart({ Difference, height }: Props) {
       name: 'Time',
       type: 'value',
       nameLocation: 'middle',
+      min: 'dataMin',
+      max: 'dataMax',
     },
     yAxis: {
       name: 'Distance',
@@ -54,7 +51,7 @@ export default function DistanceChart({ Difference, height }: Props) {
         name: 'Difference',
         type: 'line',
         showSymbol: false,
-        smooth: false,
+        smooth: true,
         color: LineColor,
       },
     ],
