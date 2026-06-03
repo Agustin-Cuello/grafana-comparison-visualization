@@ -6,119 +6,32 @@ import DistanceChart from '../Charts/DistanceChart';
 import MisalignmentChart from '../Charts/MisalignmentChart';
 import HeatmapParallelCoord  from "../heatmap/HeatmapParallelCoord";
 
-const reference = {
-  headers: ["time", "seriesA", "seriesB"],
-  data: [
-    ["0", "10", "20"],
-    ["1", "12", "18"],
-    ["2", "15", "25"],
-    ["3", "14", "22"],
-    ["4", "18", "26"],
-    ["5", "16", "23"],
-    ["6", "19", "28"],
-    ["7", "17", "24"],
-    ["8", "20", "30"],
-    ["9", "22", "32"],
-  ],
-};
-
-const target = {
-  headers: ["time", "seriesA", "seriesB"],
-  data: [
-    ["0", "11", "19"],
-    ["1", "13", "17"],
-    ["2", "16", "24"],
-    ["3", "15", "21"],
-    ["4", "17", "27"],
-    ["5", "18", "22"],
-    ["6", "20", "29"],
-    ["7", "19", "23"],
-    ["8", "21", "31"],
-    ["9", "23", "33"],
-  ],
-};
-
-const source = [
-  {
-    index: 0,
-    warping: 0,
-    distance: 0.1,
-    misalignment: 0.2,
-    degree_of_misalignment: 0.3,
-  },
-  {
-    index: 1,
-    warping: 1,
-    distance: 0.4,
-    misalignment: 0.5,
-    degree_of_misalignment: 0.8,
-  },
-  {
-    index: 2,
-    warping: 2,
-    distance: 0.2,
-    misalignment: 0.1,
-    degree_of_misalignment: 0.2,
-  },
-  {
-    index: 3,
-    warping: 0.5,
-    distance: 0.3,
-    misalignment: 0.25,
-    degree_of_misalignment: 0.4,
-  },
-  {
-    index: 4,
-    warping: 1.5,
-    distance: 0.35,
-    misalignment: 0.45,
-    degree_of_misalignment: 0.6,
-  },
-  {
-    index: 5,
-    warping: 2.5,
-    distance: 0.25,
-    misalignment: 0.15,
-    degree_of_misalignment: 0.35,
-  },
-  {
-    index: 6,
-    warping: 1.2,
-    distance: 0.28,
-    misalignment: 0.32,
-    degree_of_misalignment: 0.5,
-  },
-  {
-    index: 7,
-    warping: 0.8,
-    distance: 0.15,
-    misalignment: 0.18,
-    degree_of_misalignment: 0.25,
-  },
-  {
-    index: 8,
-    warping: 2.1,
-    distance: 0.38,
-    misalignment: 0.52,
-    degree_of_misalignment: 0.75,
-  },
-  {
-    index: 9,
-    warping: 1.7,
-    distance: 0.32,
-    misalignment: 0.38,
-    degree_of_misalignment: 0.55,
-  },
-];
+import { ManhattanComparator } from "../comparators/ManhattanComparator";
+import type { TimeSeries } from "../../types/TSComparator.types";
+import type { TableData } from "../../types/TableData.types";
 
 export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
+  console.log("Full data:", data);
+
   const processedDistanceData = transformDistanceData(data);
   const processedMisalignmentData = transformMisalignmentData(data);
-  //print header of processed columns:
   
-  console.log('Processed distance data header: ', Object.keys(processedDistanceData[0] || {}));
-  console.log('Processed distance: ', processedDistanceData);
-  console.log('Processed misalignment: ', processedMisalignmentData);
+  const referenceSeries = frameToTimeSeries(data.series[0]);
+  const targetSeries = frameToTimeSeries(data.series[1]);
+
+  const referenceSeriesTD = frameToTableData(data.series[0]);
+  const targetSeriesTD = frameToTableData(data.series[1]);
+
+  console.log("Reference Series:", referenceSeries); 
+  console.log("Target Series:", targetSeries);
+
+  console.log("Reference Series TD:", referenceSeriesTD); 
+  console.log("Target Series TD:", targetSeriesTD);
+
+  const comparator = new ManhattanComparator();
+  const result = comparator.compare(referenceSeries, targetSeries);
+
+  console.log("Comparison Result:", result);
   return (
     
     <div style={{ width, height, overflowY:"scroll"}}>
@@ -134,9 +47,9 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
       /> 
       <div style={{ width: "100%", height: height*0.4 }}>
       <HeatmapParallelCoord
-          reference={reference}
-          target={target}
-          source={source}
+          reference={referenceSeriesTD}
+          target={targetSeriesTD}
+          source={result}
       />
       </div>
     </div>
@@ -161,7 +74,7 @@ function transformMisalignmentData(data: PanelData): MisalignmentPoint[] {
 
   const minTimestamp = Number(timeField.values[0]);
 
-  for (let i = 0; i < (frame.length)/10; i++) {
+  for (let i = 0; i < (frame.length); i++) {
     const timestamp = Number((timeField.values[i] - minTimestamp) / 1000);
     const value = Number(valueField.values[i]);
     result.push({
@@ -192,7 +105,7 @@ function transformDistanceData(data: PanelData): DistancePoint[] {
 
   const minTimestamp = Number(timeField.values[0]);
 
-  for (let i = 0; i < (frame.length)/10; i++) {
+  for (let i = 0; i < (frame.length); i++) {
     const timestamp = Number((timeField.values[i] - minTimestamp) / 1000); // Convert to seconds and normalize
     const value = Number(valueField.values[i]);
     const earlylate = [-1, 0, 1] as const; //Debug
@@ -207,3 +120,55 @@ function transformDistanceData(data: PanelData): DistancePoint[] {
 
   return result;
 }
+
+function frameToTimeSeries(frame: PanelData["series"][number]): TimeSeries {
+  const timeField = frame.fields.find(f => f.type === "time");
+  const valueFields = frame.fields.filter(f => f !== timeField);
+
+  if (!timeField || valueFields.length === 0) {
+    return [];
+  }
+
+  const rows: number[][] = [];
+
+  for (let i = 0; i < frame.length; i++) {
+    const values = valueFields.map(f => Number(f.values.get(i)));
+
+    // push only the value columns (remove the timestamp column)
+    rows.push(values);
+  }
+
+  return rows as TimeSeries;
+}
+
+function frameToTableData(frame: PanelData["series"][number]): TableData {
+  const timeField = frame.fields.find(f => f.type === "time");
+  const valueFields = frame.fields.filter(f => f !== timeField);
+
+  if (!timeField || valueFields.length === 0) {
+    return { headers: [], data: [] } as TableData;
+  }
+
+  const headers = [timeField.name || 'time', ...valueFields.map(f => f.name || '')];
+  const data: string[][] = [];
+
+  for (let i = 0; i < frame.length; i++) {
+    const row: string[] = [];
+    // time value
+    const t = timeField.values.get(i);
+    row.push(String(t));
+    // all other columns
+    for (const vf of valueFields) {
+      row.push(String(vf.values.get(i)));
+    }
+    data.push(row);
+  }
+
+  return {
+    headers,
+    data,
+  } as TableData;
+}
+
+
+
