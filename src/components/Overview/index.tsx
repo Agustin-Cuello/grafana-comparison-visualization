@@ -11,27 +11,34 @@ import type { TimeSeries } from "../../types/TSComparator.types";
 import type { TableData } from "../../types/TableData.types";
 
 export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
-  console.log("Full data:", data);
+  const referenceFrame = data.series[0];
+  const targetFrame = data.series[1];
 
-  const processedDistanceData = transformDistanceData(data);
-  const processedMisalignmentData = transformMisalignmentData(data);
+  if (!referenceFrame || !targetFrame) {
+    return (
+      <div style={{ width, height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        This panel requires at least two time series.
+      </div>
+    );
+  }
+
+  //TODO Data falsa, estas 2 líneas se van y se utiliza el cálculo real
+  const processedDistanceData = React.useMemo(() => transformDistanceData(data), [data]);
+  const processedMisalignmentData = React.useMemo(() => transformMisalignmentData(data), [data]);
   
-  const referenceSeries = frameToTimeSeries(data.series[0]);
-  const targetSeries = frameToTimeSeries(data.series[1]);
+  const referenceSeries = React.useMemo(() => frameToTimeSeries(referenceFrame), [referenceFrame]);
+  const targetSeries = React.useMemo(() => frameToTimeSeries(targetFrame), [targetFrame]);
 
-  const referenceSeriesTD = frameToTableData(data.series[0]);
-  const targetSeriesTD = frameToTableData(data.series[1]);
+  const referenceSeriesTD = React.useMemo(() => frameToTableData(referenceFrame), [referenceFrame]);
+  const targetSeriesTD = React.useMemo(() => frameToTableData(targetFrame), [targetFrame]);
 
-  console.log("Reference Series:", referenceSeries); 
-  console.log("Target Series:", targetSeries);
+  const result = React.useMemo(() => {
+    const comparator = new ManhattanComparator();
+    console.log("Calculado comparación entre series");
+    return comparator.compare(referenceSeries, targetSeries);
+  }, [referenceSeries, targetSeries]);
 
-  console.log("Reference Series TD:", referenceSeriesTD); 
-  console.log("Target Series TD:", targetSeriesTD);
 
-  const comparator = new ManhattanComparator();
-  const result = comparator.compare(referenceSeries, targetSeries);
-
-  console.log("Comparison Result:", result);
   return (
     
     <div style={{ width, height, overflowY:"scroll"}}>
