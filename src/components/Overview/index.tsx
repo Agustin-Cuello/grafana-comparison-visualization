@@ -2,8 +2,8 @@ import React from 'react';
 import { PanelData, PanelProps } from '@grafana/data';
 import { DistancePoint, MisalignmentPoint} from '../../types';
 
-import DistanceChart from '../Charts/DistanceChart';
-import MisalignmentChart from '../Charts/MisalignmentChart';
+//import DistanceChart from '../Charts/DistanceChart';
+//import MisalignmentChart from '../Charts/MisalignmentChart';
 import HeatmapParallelCoord  from "../heatmap/HeatmapParallelCoord";
 
 import { ManhattanComparator } from "../comparators/ManhattanComparator";
@@ -23,12 +23,14 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
   }
 
   //TODO Data falsa, estas 2 líneas se van y se utiliza el cálculo real
-  const processedDistanceData = React.useMemo(() => transformDistanceData(data), [data]);
-  const processedMisalignmentData = React.useMemo(() => transformMisalignmentData(data), [data]);
+  //const processedDistanceData = React.useMemo(() => transformDistanceData(data), [data]);
+  //const processedMisalignmentData = React.useMemo(() => transformMisalignmentData(data), [data]);
   
+  //Data processed for comparison
   const referenceSeries = React.useMemo(() => frameToTimeSeries(referenceFrame), [referenceFrame]);
   const targetSeries = React.useMemo(() => frameToTimeSeries(targetFrame), [targetFrame]);
 
+  //Data processed for display
   const referenceSeriesTD = React.useMemo(() => frameToTableData(referenceFrame), [referenceFrame]);
   const targetSeriesTD = React.useMemo(() => frameToTableData(targetFrame), [targetFrame]);
 
@@ -41,18 +43,8 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
 
   return (
     
-    <div style={{ width, height, overflowY:"scroll"}}>
-      <DistanceChart
-        Difference={processedDistanceData}
-        width={width}
-        height={height*0.3}
-      />
-      <MisalignmentChart
-        Misalignment={processedMisalignmentData}
-        width={width}
-        height={height*0.3}
-      /> 
-      <div style={{ width: "100%", height: height*0.4 }}>
+    <div style={{ width, height, overflowY:"scroll", overflowX:"scroll"}}>
+      <div style={{ width: width, height: height*1.5 }}>
       <HeatmapParallelCoord
           reference={referenceSeriesTD}
           target={targetSeriesTD}

@@ -27,6 +27,8 @@ function getColor(value : number){
 }
 
 export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, warpingPairs} : auxProps){
+    const refVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(refHmapConfig.length)));
+    const targetVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(targetHmapConfig.length)));
 
     const getRefHmap = useMemo(() => {
         return refHmapConfig.map((config) => ({            
@@ -95,8 +97,8 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     realtime: false,
                     show: true,
                     orient: 'horizontal',
-                    right: (15*Math.abs(((config.id)%5))+15).toString()+'%',
-                    top: (10*(Math.floor((config.id)/5))).toString()+'%',
+                    right: (15*Math.abs((config.id % refVisualMapColumns)) + 15).toString() + '%',
+                    top: (10 * Math.floor(config.id / refVisualMapColumns)).toString() + '%',
                     text: ["",config.name],
                     inRange: {
                     color: exampleScales[config.scaleIndex].scale,
@@ -118,8 +120,8 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     realtime: false,
                     show: true,
                     orient: 'horizontal',
-                    left: (15*Math.abs((config.id%5)-4)+15).toString()+'%',
-                    bottom: (10*(Math.floor((config.id)/5))).toString()+'%',
+                    left: (15 * Math.abs((config.id % targetVisualMapColumns) - Math.min(targetVisualMapColumns - 1, 4)) + 15).toString() + '%',
+                    bottom: (10 * Math.floor(config.id / targetVisualMapColumns)).toString() + '%',
                     text: ["",config.name],
                     inRange: {
                         color: exampleScales[config.scaleIndex].scale,
