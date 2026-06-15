@@ -1,3 +1,5 @@
+import { ComparisonResult } from "./types/TSComparator.types";
+
 export interface PanelOptions {
   url: string;
 }
@@ -20,31 +22,14 @@ export interface MatrixCell {
   values: number[]; 
 };
 
-
-export interface MisalignmentPoint {
-  timestamp: number;
-  value: number;
-};
-
-export interface DistancePoint {
-  timestamp: number;
-  value: number;
-  early: -1 | 0 | 1;
-};
-
 export interface DistanceProps {
-  Difference: Array<DistancePoint>;
+  Distance: ComparisonResult;
   height: number;
   width: number;
 }
 
-export interface MisalignmentPoint {
-  timestamp: number;
-  value: number;
-};
-
 export interface MisalignmentProps {
-  Misalignment: Array<MisalignmentPoint>;
+  Misalignment: ComparisonResult;
   height: number;
   width: number;
 }

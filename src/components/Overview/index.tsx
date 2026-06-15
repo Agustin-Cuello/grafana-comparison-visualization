@@ -1,9 +1,8 @@
 import React from 'react';
 import { PanelData, PanelProps } from '@grafana/data';
-import { DistancePoint, MisalignmentPoint} from '../../types';
 
-//import DistanceChart from '../Charts/DistanceChart';
-//import MisalignmentChart from '../Charts/MisalignmentChart';
+import DistanceChart from '../Charts/DistanceChart';
+import MisalignmentChart from '../Charts/MisalignmentChart';
 import HeatmapParallelCoord  from "../heatmap/HeatmapParallelCoord";
 
 import { ManhattanComparator } from "../comparators/ManhattanComparator";
@@ -22,10 +21,6 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
     );
   }
 
-  //TODO Data falsa, estas 2 líneas se van y se utiliza el cálculo real
-  //const processedDistanceData = React.useMemo(() => transformDistanceData(data), [data]);
-  //const processedMisalignmentData = React.useMemo(() => transformMisalignmentData(data), [data]);
-  
   //Data processed for comparison
   const referenceSeries = React.useMemo(() => frameToTimeSeries(referenceFrame), [referenceFrame]);
   const targetSeries = React.useMemo(() => frameToTimeSeries(targetFrame), [targetFrame]);
@@ -40,85 +35,39 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
     return comparator.compare(referenceSeries, targetSeries);
   }, [referenceSeries, targetSeries]);
 
+  console.log("Resultado :", result);
+  console.log("Target: ", targetSeries);
+  console.log("Entry 1 de resultado: ", result[0].degree_of_misalignment);
 
   return (
-    
+  
     <div style={{ width, height, overflowY:"scroll", overflowX:"scroll"}}>
+      <div style={{ width: width, height: height*1.2 }}>
+        <DistanceChart
+          Distance={result}
+          height = {height}
+          width = {width}
+        />
+      </div>
+      
+      <div style={{ width: width, height: height*1.2 }}>
+        <MisalignmentChart
+          Misalignment={result}
+          height = {height}
+          width = {width}
+        />
+      </div>
+
       <div style={{ width: width, height: height*1.5 }}>
-      <HeatmapParallelCoord
-          reference={referenceSeriesTD}
-          target={targetSeriesTD}
-          source={result}
-      />
+        <HeatmapParallelCoord
+            reference={referenceSeriesTD}
+            target={targetSeriesTD}
+            source={result}
+        />
       </div>
     </div>
   );
 };
-
-function transformMisalignmentData(data: PanelData): MisalignmentPoint[] {
-  const result: MisalignmentPoint[] = [];
-
-  const frame = data.series[1];
-
-  if (!frame) {
-    return result;
-  }
-
-  const timeField = frame.fields.find(f => f.type === 'time');
-  const valueField = frame.fields.find(f => f.type === 'number');
-  
-  if (!timeField || !valueField) {
-    return result;
-  }
-
-  const minTimestamp = Number(timeField.values[0]);
-
-  for (let i = 0; i < (frame.length); i++) {
-    const timestamp = Number((timeField.values[i] - minTimestamp) / 1000);
-    const value = Number(valueField.values[i]);
-    result.push({
-      timestamp,
-      value
-    });
-  }
-  
-
-  return result;
-}
-
-function transformDistanceData(data: PanelData): DistancePoint[] {
-  const result: DistancePoint[] = [];
-
-  const frame = data.series[0];
-
-  if (!frame) {
-    return result;
-  }
-
-  const timeField = frame.fields.find(f => f.type === 'time');
-  const valueField = frame.fields.find(f => f.type === 'number');
-  
-  if (!timeField || !valueField) {
-    return result;
-  }
-
-  const minTimestamp = Number(timeField.values[0]);
-
-  for (let i = 0; i < (frame.length); i++) {
-    const timestamp = Number((timeField.values[i] - minTimestamp) / 1000); // Convert to seconds and normalize
-    const value = Number(valueField.values[i]);
-    const earlylate = [-1, 0, 1] as const; //Debug
-    const early = earlylate[Math.floor(Math.random() * earlylate.length)] as -1 | 0 | 1;
-    result.push({
-      timestamp,
-      value,
-      early
-    });
-  }
-  
-
-  return result;
-}
 
 function frameToTimeSeries(frame: PanelData["series"][number]): TimeSeries {
   const timeField = frame.fields.find(f => f.type === "time");

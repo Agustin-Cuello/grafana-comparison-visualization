@@ -97,7 +97,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     realtime: false,
                     show: true,
                     orient: 'horizontal',
-                    right: (15*Math.abs((config.id % refVisualMapColumns)) + 15).toString() + '%',
+                    left: (15*Math.abs((config.id % refVisualMapColumns)) + 15).toString() + '%',
                     top: (10 * Math.floor(config.id / refVisualMapColumns)).toString() + '%',
                     text: ["",config.name],
                     inRange: {
