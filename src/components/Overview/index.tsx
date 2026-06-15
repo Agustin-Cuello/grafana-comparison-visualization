@@ -5,7 +5,7 @@ import DistanceChart from '../Charts/DistanceChart';
 import MisalignmentChart from '../Charts/MisalignmentChart';
 import HeatmapParallelCoord  from "../heatmap/HeatmapParallelCoord";
 
-import { ManhattanComparator } from "../comparators/ManhattanComparator";
+import { ManhattanComparator } from "../../utils/comparators/ManhattanComparator";
 import type { TimeSeries } from "../../types/TSComparator.types";
 import type { TableData } from "../../types/TableData.types";
 
@@ -41,19 +41,19 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
 
   return (
   
-    <div style={{ width, height, overflowY:"scroll", overflowX:"scroll"}}>
-      <div style={{ width: width, height: height*1.2 }}>
+    <div style={{ width, height, overflowY:"scroll", overflowX:"scroll", marginBottom: "10%"}}>
+      <div style={{ width: width, height: height*1.3 }}>
         <DistanceChart
           Distance={result}
-          height = {height}
+          height = {height*1.5}
           width = {width}
         />
       </div>
       
-      <div style={{ width: width, height: height*1.2 }}>
+      <div style={{ width: width, height: height*1.4}}>
         <MisalignmentChart
           Misalignment={result}
-          height = {height}
+          height = {height*1.5}
           width = {width}
         />
       </div>

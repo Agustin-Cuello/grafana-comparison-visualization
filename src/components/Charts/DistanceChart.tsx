@@ -53,6 +53,8 @@ export default function DistanceChart(props: DistanceProps) {
         seriesIndex: 0,
         orient: 'horizontal',
         left: 'right',
+        top: 0,
+        z: 10,
         text: ['Early','Late'],
         dimension: 4,
         inRange: {

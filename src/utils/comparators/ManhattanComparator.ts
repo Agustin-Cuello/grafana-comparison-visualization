@@ -1,4 +1,4 @@
-import { AbstractTSComparator } from "../TSComparator";
+import { AbstractTSComparator } from "../../components/TSComparator";
 import type { NDimensionalPoint } from "../../types/TSComparator.types";
 
 export class ManhattanComparator extends AbstractTSComparator{    

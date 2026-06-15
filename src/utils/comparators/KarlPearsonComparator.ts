@@ -1,6 +1,6 @@
-import { AbstractTSComparator } from "../TSComparator";
+import { AbstractTSComparator } from "../../components/TSComparator";
 import type { ComparisonResult, NDimensionalPoint, TimeSeries } from "../../types/TSComparator.types";
-import { StdDevHelper } from "../../utils/StdDevHelper";
+import { StdDevHelper } from "../StdDevHelper";
 
 export class KarlPearsonComparator extends AbstractTSComparator{
 

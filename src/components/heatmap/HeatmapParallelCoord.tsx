@@ -56,12 +56,18 @@ export default function HeatmapParallelCoord({reference, target, source} : Heatm
     }, []);
 
     return (<>
-        {!loading && (<>        
-        <HeatmapOptions toggled={toggledRefOps} hmapConfig={refHmapConfig} setHmapConfig={setRefHmapConfig}/>
-        <button className="toggleHeatmapOptions" onClick={toggleRefOps}>Ref. heatmap options</button>
-        <EHeatmapParallelCoord refHmapConfig={refHmapConfig} targetHmapConfig={targetHmapConfig} warpingPairs={wapingPairs} />
-        <button className="toggleHeatmapOptions" onClick={toggleTargetOps}>Target heatmap options</button>
-        <HeatmapOptions toggled={toggledTargetOps} hmapConfig={targetHmapConfig} setHmapConfig={setTargetHmapConfig}/>
-        </>)}
+        {!loading && (
+            <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+                <div style={{ width: "100%", display: "flex", flexDirection: "column", marginTop: "10%" }}>
+                    <button className="toggleHeatmapOptions" onClick={toggleRefOps}>Ref. heatmap options</button>
+                    <HeatmapOptions toggled={toggledRefOps} hmapConfig={refHmapConfig} setHmapConfig={setRefHmapConfig}/>
+                </div>
+                <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+                    <button className="toggleHeatmapOptions" onClick={toggleTargetOps}>Target heatmap options</button>
+                    <HeatmapOptions toggled={toggledTargetOps} hmapConfig={targetHmapConfig} setHmapConfig={setTargetHmapConfig}/>
+                </div>
+                <EHeatmapParallelCoord refHmapConfig={refHmapConfig} targetHmapConfig={targetHmapConfig} warpingPairs={wapingPairs} />
+            </div>
+        )}
     </>)
 }
