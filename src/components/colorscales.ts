@@ -1,6 +1,6 @@
 export const exampleScales = [
     {
-        name: 'greys',
+        name: 'black-white',
         scale: [
             '#000000',
             '#1A1A1A',
@@ -11,5 +11,19 @@ export const exampleScales = [
             '#D9D9D9',
             '#FFFFFF'
         ]
+    },
+    {
+        name: 'blue-white',
+        scale: [
+            '#001F3F',
+            '#003D7A',
+            '#0051B3',
+            '#0066FF',
+            '#3385FF',
+            '#66A3FF',
+            '#99C2FF',
+            '#FFFFFF'
+        ]
     }
+    
 ];

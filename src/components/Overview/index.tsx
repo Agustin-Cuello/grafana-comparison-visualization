@@ -42,18 +42,18 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
   return (
   
     <div style={{ width, height, overflowY:"scroll", overflowX:"scroll", marginBottom: "10%"}}>
-      <div style={{ width: width, height: height*1.3 }}>
+      <div style={{ width: width, height: height }}>
         <DistanceChart
           Distance={result}
-          height = {height*1.5}
+          height = {height*1.25}
           width = {width}
         />
       </div>
       
-      <div style={{ width: width, height: height*1.4}}>
+      <div style={{ width: width, height: height}}>
         <MisalignmentChart
           Misalignment={result}
-          height = {height*1.5}
+          height = {height*1.25}
           width = {width}
         />
       </div>
