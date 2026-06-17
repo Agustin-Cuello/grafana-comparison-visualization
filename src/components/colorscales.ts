@@ -1,6 +1,5 @@
 export const exampleScales = [
     {
-    {
         name: 'greys',
         scale: [
             '#000000',
