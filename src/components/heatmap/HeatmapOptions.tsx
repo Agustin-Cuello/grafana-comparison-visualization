@@ -5,12 +5,12 @@ import './Heatmaps.css';
 import React from "react";
 
 type HeatmapOptionsProps = {
-    toggled : Boolean;
-    hmapConfig : HeatmapConfig[];
-    setHmapConfig : React.Dispatch<React.SetStateAction<HeatmapConfig[]>>;
+    toggled: Boolean;
+    hmapConfig: HeatmapConfig[];
+    setHmapConfig: React.Dispatch<React.SetStateAction<HeatmapConfig[]>>;
 }
 
-export default function HeatmapOptions({toggled, hmapConfig, setHmapConfig} : HeatmapOptionsProps) {
+export default function HeatmapOptions({toggled, hmapConfig, setHmapConfig}: HeatmapOptionsProps) {
 
     const updateHmapConfigValue = useCallback(
         <TKey extends keyof HeatmapConfig, TValue extends HeatmapConfig[TKey]>(hmapId: number,property: string,newValue: TValue) => {
@@ -22,7 +22,7 @@ export default function HeatmapOptions({toggled, hmapConfig, setHmapConfig} : He
         setHmapConfig(newConfig);
     }, [hmapConfig]);
 
-    const getParsedFloatOrDefault = useCallback((input : string, defaultValue : number) => {
+    const getParsedFloatOrDefault = useCallback((input: string, defaultValue: number) => {
         return (input == "") ? defaultValue : parseFloat(input);
     }, []);
 

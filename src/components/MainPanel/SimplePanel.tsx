@@ -25,7 +25,7 @@ export const SimplePanel: React.FC<Props> = ({ data, width, height }) => {
   const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;

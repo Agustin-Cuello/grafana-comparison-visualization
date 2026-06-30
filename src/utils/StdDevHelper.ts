@@ -10,7 +10,7 @@ export class StdDevHelper {
      * @param ts2 second time series
      * @returns an array containing the standard deviation for each variable on the time-series
      */
-    public static computeStdDev(ts1 : TimeSeries, ts2 : TimeSeries) : Array<number> {
+    public static computeStdDev(ts1: TimeSeries, ts2: TimeSeries): number[] {
         const variable_count = ts1[0].length;
         let wv = {m: [...ts1[0]], s: Array<number>(variable_count).fill(0), k: 1} as WelfordVariables;
 

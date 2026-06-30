@@ -1,9 +1,9 @@
 export type Cell = string;
 export type Header = string;
 
-export type Row = Array<Cell>;
+export type Row = Cell[];
 
 export type TableData = {
-    headers : Array<Header>;
-    data : Array<Row>;
+    headers: Header[];
+    data: Row[];
 };

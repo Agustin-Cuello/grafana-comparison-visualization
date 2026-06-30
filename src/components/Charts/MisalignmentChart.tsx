@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import { LineColor } from '../Colors';
 import { MisalignmentProps } from '../../types';
 
-export default function MisalignmentChart( props:MisalignmentProps ) {
+export default function MisalignmentChart( props: MisalignmentProps ) {
   const option = {
     dataset:{
         source: props.Misalignment

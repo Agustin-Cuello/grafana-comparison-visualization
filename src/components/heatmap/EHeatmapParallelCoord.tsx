@@ -5,15 +5,15 @@ import { exampleScales } from '../colorscales';
 import React from 'react';
 
 type auxProps = {
-    refHmapConfig : HeatmapConfig[];
-    targetHmapConfig : HeatmapConfig[];
-    warpingPairs : WarpingPair[];
+    refHmapConfig: HeatmapConfig[];
+    targetHmapConfig: HeatmapConfig[];
+    warpingPairs: WarpingPair[];
 }
 
-function getColor(value : number){
-    let red : number;
-    let green : number;
-    let blue : number;
+function getColor(value: number){
+    let red: number;
+    let green: number;
+    let blue: number;
     if(value < 0){
         red = Math.max(0, Math.min(255, 112*value+239));
         green = Math.max(0, Math.min(255, 90*value+255));
@@ -26,7 +26,7 @@ function getColor(value : number){
     return "rgb("+red+","+green+","+blue+")";
 }
 
-export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, warpingPairs} : auxProps){
+export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, warpingPairs}: auxProps){
     const refVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(refHmapConfig.length)));
     const targetVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(targetHmapConfig.length)));
 
@@ -40,7 +40,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                         animation: false,
                         tooltip: {
                             trigger: 'item',
-                            formatter: function(params : any){
+                            formatter: function(params: any){
                                 return `
                                     <b>Time from Reference: ${params.value[0]}</b>
                                     <p>${params.value[1]}: <span style="color:${params.color}">█</span> ${params.value[2]}</p>                             
@@ -60,7 +60,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                         animation: false,
                         tooltip: {
                             trigger: 'item',
-                            formatter: function(params : any){
+                            formatter: function(params: any){
                                 return `
                                     <b>Time from Target: ${params.value[0]}</b>
                                     <p>${params.value[1]}: <span style="color:${params.color}">█</span> ${params.value[2]}</p>                             

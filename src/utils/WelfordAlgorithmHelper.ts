@@ -1,9 +1,9 @@
 import type { NDimensionalPoint } from "../types/TSComparator.types";
 
 export type WelfordVariables = {
-    m : Array<number>;
-    s : Array<number>;
-    k : number;
+    m: number[];
+    s: number[];
+    k: number;
 }
 
 /**
@@ -11,7 +11,7 @@ export type WelfordVariables = {
  * of standard deviations for populations. Implemented for arrays of N-Dimensional points
  */
 export class WelfordAlgorithmHelper {    
-    public static update({m,s,k} : WelfordVariables, point : NDimensionalPoint) : WelfordVariables {
+    public static update({m,s,k}: WelfordVariables, point: NDimensionalPoint): WelfordVariables {
         k = k+1;
         point.forEach((variable, var_index) => {
                 const prev_m = m[var_index];
@@ -21,7 +21,7 @@ export class WelfordAlgorithmHelper {
         return {m: m,s: s,k: k} as WelfordVariables;
     }
 
-    public static finalize({s,k} : WelfordVariables) : Array<number> {
+    public static finalize({s,k}: WelfordVariables): number[] {
         return s.map((s_value) => (Math.sqrt(s_value/k)));
     }
 }

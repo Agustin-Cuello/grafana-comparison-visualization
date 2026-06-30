@@ -5,7 +5,7 @@ import DistanceChart from '../Charts/DistanceChart';
 import MisalignmentChart from '../Charts/MisalignmentChart';
 import HeatmapParallelCoord  from "../heatmap/HeatmapParallelCoord";
 
-import { ManhattanComparator } from "../../utils/comparators/ManhattanComparator";
+import { KarlPearsonComparator } from "../../utils/comparators/KarlPearsonComparator";
 import type { TimeSeries } from "../../types/TSComparator.types";
 import type { TableData } from "../../types/TableData.types";
 
@@ -30,14 +30,10 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
   const targetSeriesTD = React.useMemo(() => frameToTableData(targetFrame), [targetFrame]);
 
   const result = React.useMemo(() => {
-    const comparator = new ManhattanComparator();
+    const comparator = new KarlPearsonComparator();
     console.log("Calculado comparación entre series");
     return comparator.compare(referenceSeries, targetSeries);
   }, [referenceSeries, targetSeries]);
-
-  console.log("Resultado :", result);
-  console.log("Target: ", targetSeries);
-  console.log("Entry 1 de resultado: ", result[0].degree_of_misalignment);
 
   return (
   
@@ -97,15 +93,12 @@ function frameToTableData(frame: PanelData["series"][number]): TableData {
     return { headers: [], data: [] } as TableData;
   }
 
-  const headers = [timeField.name || 'time', ...valueFields.map(f => f.name || '')];
+  const headers = valueFields.map(f => f.name || '');
   const data: string[][] = [];
 
   for (let i = 0; i < frame.length; i++) {
     const row: string[] = [];
-    // time value
-    const t = timeField.values.get(i);
-    row.push(String(t));
-    // all other columns
+    // all value columns (exclude time)
     for (const vf of valueFields) {
       row.push(String(vf.values.get(i)));
     }

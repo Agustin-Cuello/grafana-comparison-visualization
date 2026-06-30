@@ -2,7 +2,7 @@ import type { TimeSeries } from "../../types/TSComparator.types";
 
 
 export class TSValidator {
-    public static validate(reference : TimeSeries, target : TimeSeries) : void {
+    public static validate(reference: TimeSeries, target: TimeSeries): void {
         if(getConsistentDimensions(reference) != getConsistentDimensions(target)){
             throw new Error("Both time-series must have the same dimensionality in order to be compared.");            
         }
@@ -12,7 +12,7 @@ export class TSValidator {
     }
 }
 
-function getConsistentDimensions(ts: TimeSeries) : number {
+function getConsistentDimensions(ts: TimeSeries): number {
     if(ts.length == 0){
         throw new Error("Time-series must not be empty");
     }
@@ -35,7 +35,7 @@ function getConsistentDimensions(ts: TimeSeries) : number {
     return expected_variable_count;
 }
 
-function allPointsAreNumeric(ts : TimeSeries){
+function allPointsAreNumeric(ts: TimeSeries){
     let allNumeric = true;
     const row_count = ts.length;
 
@@ -48,10 +48,10 @@ function allPointsAreNumeric(ts : TimeSeries){
     return allNumeric;
 }
 
-function isNumeric(point : Array<any>) : boolean {
+function isNumeric(point: any[]): boolean {
     let isNumeric = true;
     for(let i=0; i<point.length && isNumeric; i++){
-        if(!(typeof point[i] == 'number') || isNaN(point[i])){
+        if(!(typeof point[i] === 'number') || isNaN(point[i])){
             isNumeric = false;
         }
     }

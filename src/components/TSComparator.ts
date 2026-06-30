@@ -3,17 +3,17 @@ import type { ComparisonResult, NDimensionalPoint, Pair, Path, ResultEntry, Time
 import { TSValidator } from './validators/TSValidator';
 
 export interface IMatrix<T> {
-    get(row : number, column : number) : T;
-    set(row : number, column : number, value : T) : void;
-    getRows() : number;
-    getColumns() : number;
+    get(row: number, column: number): T;
+    set(row: number, column: number, value: T): void;
+    getRows(): number;
+    getColumns(): number;
 }
 
 export class Matrix<T> implements IMatrix<T>{
 
-    private matrix : Array<Array<T>>;
+    private matrix: T[][];
 
-    constructor(num_rows : number, num_columns : number, defaultValue : T){
+    constructor(num_rows: number, num_columns: number, defaultValue: T){
         if(num_rows <= 0 || num_columns <= 0){
             throw new Error("Matrix must have at least one row and one column.");
         }
@@ -24,7 +24,7 @@ export class Matrix<T> implements IMatrix<T>{
         }
     }
 
-    private checkInBounds(row: number, column: number) : void {
+    private checkInBounds(row: number, column: number): void {
         if(row < 0 || column < 0 || row >= this.getRows() || column >= this.getColumns()){
             throw new Error(`Index out of bounds: Row ${row}, Column ${column}`);
         }
@@ -50,7 +50,7 @@ export class Matrix<T> implements IMatrix<T>{
 }
 
 export interface TSComparator {
-    compare(reference : TimeSeries, target : TimeSeries) : ComparisonResult;
+    compare(reference: TimeSeries, target: TimeSeries): ComparisonResult;
 }
 
 export abstract class AbstractTSComparator implements TSComparator {
@@ -62,9 +62,9 @@ export abstract class AbstractTSComparator implements TSComparator {
         return this.performComparison(reference, target);
     }
 
-    protected abstract distance(point1 : NDimensionalPoint, point2 : NDimensionalPoint) : number;
+    protected abstract distance(point1: NDimensionalPoint, point2: NDimensionalPoint): number;
 
-    protected performComparison(reference : TimeSeries, target : TimeSeries) : ComparisonResult {        
+    protected performComparison(reference: TimeSeries, target: TimeSeries): ComparisonResult {        
 
         const accDistMatrix = this.calculateDistanceMatrix(reference, target);
         const minDistPath = this.calculateMinimalDistPath(accDistMatrix);
@@ -94,7 +94,7 @@ export abstract class AbstractTSComparator implements TSComparator {
      * @param {TimeSeries} target - the target time-series
      * @returns the accumulated distance matrix
      */
-    private calculateDistanceMatrix(reference : TimeSeries, target : TimeSeries) : Matrix<number> {
+    private calculateDistanceMatrix(reference: TimeSeries, target: TimeSeries): Matrix<number> {
         const accDistMatrix = new Matrix<number>(reference.length, target.length, 0);
 
         accDistMatrix.set(0,0, this.distance(reference[0], target[0]));
@@ -111,7 +111,7 @@ export abstract class AbstractTSComparator implements TSComparator {
     
         for(let i=1; i<reference.length; i++){
             for(let j=1; j<target.length; j++){
-                const min_neighbor : number = min(accDistMatrix.get(i-1,j-1), accDistMatrix.get(i-1,j), accDistMatrix.get(i,j-1));
+                const min_neighbor: number = min(accDistMatrix.get(i-1,j-1), accDistMatrix.get(i-1,j), accDistMatrix.get(i,j-1));
                 accDistMatrix.set(i,j,this.distance(reference[i], target[j]) + min_neighbor);
             }
         }    
@@ -123,8 +123,8 @@ export abstract class AbstractTSComparator implements TSComparator {
      * @param {Matrix} distMatrix - the accumulated-distance matrix
      * @returns a list of pairs (i,j) that describes a warping between the sequences
      */
-    private calculateMinimalDistPath(distMatrix : Matrix<number>) : Path {        
-        const path : Path = [];
+    private calculateMinimalDistPath(distMatrix: Matrix<number>): Path {        
+        const path: Path = [];
                 
         let i = distMatrix.getRows()-1;
         let j = distMatrix.getColumns()-1;
@@ -156,7 +156,7 @@ export abstract class AbstractTSComparator implements TSComparator {
      * @param minimalDistancePath - minimal distance path between both time-series
      * @returns the best matching record in the target-time series for the given record in the reference time-series
      */
-    private getBestMatch(index : number, minimalDistancePath : Path) : number {
+    private getBestMatch(index: number, minimalDistancePath: Path): number {
         const matchingPairs = minimalDistancePath.filter((pair) => (pair.first == index));
         const candidates = matchingPairs.map((pair) => pair.second);
         return floor(mean(candidates));
@@ -168,7 +168,7 @@ export abstract class AbstractTSComparator implements TSComparator {
      * @param minimalDistancePath - minimal distance path between the reference time-series and a target time-series
      * @returns an array containing all best-matching records for each record in the reference time-series
      */
-    private calculateWarping(reference : TimeSeries, minimalDistancePath : Path) : Array<number>{
+    private calculateWarping(reference: TimeSeries, minimalDistancePath: Path): number[]{
         const warping = Array<number>(reference.length);
         for(let n=0; n<reference.length; n++){
             warping[n] = this.getBestMatch(n, minimalDistancePath);
@@ -183,7 +183,7 @@ export abstract class AbstractTSComparator implements TSComparator {
      * @returns an array containing the distance to the best-matching index in the target time-series for each record
      * in the reference time-series
      */
-    private calculateMisalignment(warping : Array<number>) : Array<number> {
+    private calculateMisalignment(warping: number[]): number[] {
         let misalignment = Array<number>(warping.length);
         for(let n=0; n<warping.length; n++){
             misalignment[n] = warping[n] - n;
@@ -198,7 +198,7 @@ export abstract class AbstractTSComparator implements TSComparator {
      * the index of its best-match in the target time-series
      * @returns an array containing the degree of misalignment of each record in the reference time-series
      */
-    private calculateMisalignmentDegree(misalignment : Array<number>) : Array<number>{
+    private calculateMisalignmentDegree(misalignment: number[]): number[]{
         let misalignmentDiscreteDerivative = Array<number>(misalignment.length);        
         let misalignmentDegree = Array<number>(misalignment.length);
         if(misalignment.length == 1){
@@ -235,7 +235,7 @@ export abstract class AbstractTSComparator implements TSComparator {
      * @param warping - the warping function from the reference time-series to the target time-series
      * @returns an array containing the distance between each record in the reference-time series to its best-match in the target time-series
      */
-    private calculateDistance(reference : TimeSeries, target : TimeSeries, warping : Array<number>) : Array<number> {
+    private calculateDistance(reference: TimeSeries, target: TimeSeries, warping: number[]): number[] {
         const dist = reference.map((_point, index) => {
             const bestMatch = warping[index];
             return this.distance(reference[index], target[bestMatch])

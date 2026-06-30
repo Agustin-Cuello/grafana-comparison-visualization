@@ -4,7 +4,7 @@ import { StdDevHelper } from "../StdDevHelper";
 
 export class KarlPearsonComparator extends AbstractTSComparator{
 
-    private weights! : Array<number>;
+    private weights!: number[];
 
     constructor(){
         super();
@@ -25,7 +25,7 @@ export class KarlPearsonComparator extends AbstractTSComparator{
         return Math.sqrt(sum_squared_weighted_diffs);
     }
 
-    private computeWeights(reference : TimeSeries, target : TimeSeries) : void {
+    private computeWeights(reference: TimeSeries, target: TimeSeries): void {
         this.weights = StdDevHelper.computeStdDev(reference, target);
     }
 }

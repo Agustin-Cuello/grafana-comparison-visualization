@@ -6,12 +6,12 @@ import EHeatmapParallelCoord from "./EHeatmapParallelCoord";
 import React from "react";
 
 type HeatmapParallelProps = {
-    reference : TableData;
-    target : TableData;
-    source : Array<VisEntry>;
+    reference: TableData;
+    target: TableData;
+    source: VisEntry[];
 }
 
-function initializeHeatmap(table : TableData){
+function initializeHeatmap(table: TableData){
     return table.headers.map((header, index) => {
             const data = table.data.map((row) => parseFloat(row[index]));
             const minValue = Math.min(...data);
@@ -27,10 +27,10 @@ function initializeHeatmap(table : TableData){
         });
 }
 
-export default function HeatmapParallelCoord({reference, target, source} : HeatmapParallelProps) {
+export default function HeatmapParallelCoord({reference, target, source}: HeatmapParallelProps) {
     const [refHmapConfig, setRefHmapConfig] = useState<HeatmapConfig[]>([]);
     const [targetHmapConfig, setTargetHmapConfig] = useState<HeatmapConfig[]>([]);
-    const [wapingPairs, setWarpingPairs] = useState<Array<WarpingPair>>([]);
+    const [wapingPairs, setWarpingPairs] = useState<WarpingPair[]>([]);
 
     const [loading, setLoading] = useState<Boolean>(false);
     const [toggledTargetOps, setToggledTargetOps] = useState<Boolean>(false);

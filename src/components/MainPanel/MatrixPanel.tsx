@@ -11,9 +11,9 @@ type MatrixCanvasProps = {
 };
 
 function valueToColor(value: number) {
-  if (value < -2) return '#d73027';
-  if (value < 0) return '#fc8d59';
-  if (value < 2) return '#fee08b';
+  if (value < -2) {return '#d73027';}
+  if (value < 0) {return '#fc8d59';}
+  if (value < 2) {return '#fee08b';}
   return '#91cf60';
 }
 
@@ -30,10 +30,10 @@ export function MatrixCanvas ({
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     const context = canvas.getContext('2d');
-    if (!context) return;
+    if (!context) {return;}
 
     context.clearRect(0, 0, width, height);
 
@@ -47,7 +47,7 @@ export function MatrixCanvas ({
       const colIndex = years.indexOf(cell.col);
       const rowIndex = years.indexOf(cell.row);
 
-      if (colIndex === -1 || rowIndex === -1) return;
+      if (colIndex === -1 || rowIndex === -1) {return;}
 
       const x = colIndex * cellWidth;
       const y = rowIndex * cellHeight;

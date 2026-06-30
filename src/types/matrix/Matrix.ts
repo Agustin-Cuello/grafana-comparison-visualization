@@ -1,15 +1,15 @@
 export interface IMatrix<T> {
-    get(row : number, column : number) : T;
-    set(row : number, column : number, value : T) : void;
-    getRows() : number;
-    getColumns() : number;
+    get(row: number, column: number): T;
+    set(row: number, column: number, value: T): void;
+    getRows(): number;
+    getColumns(): number;
 }
 
 export class Matrix<T> implements IMatrix<T>{
 
-    private matrix : Array<Array<T>>;
+    private matrix: T[][];
 
-    constructor(num_rows : number, num_columns : number, defaultValue : T){
+    constructor(num_rows: number, num_columns: number, defaultValue: T){
         if(num_rows <= 0 || num_columns <= 0){
             throw new Error("Matrix must have at least one row and one column.");
         }
@@ -20,7 +20,7 @@ export class Matrix<T> implements IMatrix<T>{
         }
     }
 
-    private checkInBounds(row: number, column: number) : void {
+    private checkInBounds(row: number, column: number): void {
         if(row < 0 || column < 0 || row >= this.getRows() || column >= this.getColumns()){
             throw new Error(`Index out of bounds: Row ${row}, Column ${column}`);
         }
