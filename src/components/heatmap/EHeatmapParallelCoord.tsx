@@ -29,6 +29,16 @@ function getColor(value: number){
 export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, warpingPairs}: auxProps){
     const refVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(refHmapConfig.length)));
     const targetVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(targetHmapConfig.length)));
+    const warpingValues = warpingPairs.map((pair) => pair.d_o_g);
+    const warpingMin = Math.min(...warpingValues);
+    const warpingMax = Math.max(...warpingValues);
+    const warpingColorScale = useMemo(() => {
+        const colorSteps = 33;
+        return Array.from({ length: colorSteps }, (_, index) => {
+            const ratio = index / (colorSteps - 1);
+            return getColor(warpingMin + (warpingMax - warpingMin) * ratio);
+        });
+    }, [warpingMin, warpingMax]);
 
     const getRefHmap = useMemo(() => {
         return refHmapConfig.map((config) => ({            
@@ -132,6 +142,28 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                 }))
     }, [targetHmapConfig])
 
+    const getWarpingLegendVisualMap = useMemo(() => {
+        return {
+            id: 'VMwarpingLegend',
+            type: 'continuous',
+            seriesIndex: [],
+            min: warpingMin,
+            max: warpingMax,
+            calculable: false,
+            realtime: false,
+            show: true,
+            orient: 'vertical',
+            left: '2%',
+            top: '36%',
+            text: ['Early', 'Late'],
+            textGap: 8,
+            itemHeight: 180,
+            inRange: {
+                color: warpingColorScale,
+            },
+        };
+    }, [warpingMin, warpingMax, warpingColorScale]);
+
     const getOption = useMemo(() => {
         if(getRefHmap.length > 0 && getTargetHmap.length > 0 && getWarpingChart.length > 0){
             return ({
@@ -152,16 +184,18 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     {gridIndex: 1, type: 'category', data: ['Target', 'Reference']},
                     {gridIndex: 2, type: 'category'}
                 ],
-                visualMap: [...getRefVisualMaps, ...getTargetVisualMaps],
+                visualMap: [...getRefVisualMaps, ...getTargetVisualMaps, getWarpingLegendVisualMap],
                 series: [...getRefHmap, ...getTargetHmap, ...getWarpingChart]
             } as Object);
         }
         return null;
-    }, [getRefVisualMaps, getTargetVisualMaps, getRefHmap, getTargetHmap, getWarpingChart]);    
+    }, [getRefVisualMaps, getTargetVisualMaps, getWarpingLegendVisualMap, getRefHmap, getTargetHmap, getWarpingChart]);    
 
     return (<>
     {getOption && <div style={{ width: "100%", height: "100%" }}>
-            <ReactECharts option={getOption} style={{height: '45em', width: '100%'}} notMerge={true} opts={{renderer: 'svg'}}/>
+            <div style={{ display: 'flex', alignItems: 'center', height: '45em' }}>
+                <ReactECharts option={getOption} style={{ height: '100%', flex: 1, minWidth: 0 }} notMerge={true} opts={{renderer: 'svg'}}/>
+            </div>
         </div> }             
     </>);
 }
