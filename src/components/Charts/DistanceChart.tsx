@@ -5,11 +5,19 @@ import { DistanceProps } from '../../types';
 
 export default function DistanceChart(props: DistanceProps) {
   const option = {
-    dataset:{
+    dataset: {
+        dimensions: [
+          'index',
+          'warping',
+          'distance',
+          'misalignment',
+          'fixedIndex',
+          'degree_of_misalignment',
+        ],
         source: props.Distance.map(point => ({
           ...point,
-          barIndex: point.index + 0.5,
-        }))
+          fixedIndex: point.index + 0.5,
+        })),
     },
     tooltip: {
       trigger: 'axis',
@@ -41,10 +49,7 @@ export default function DistanceChart(props: DistanceProps) {
       type: 'value',
       nameLocation: 'middle',
       min: 0,
-      max: (value: { max: number }) => value.max + 0.5,
-      axisLabel: {
-        formatter: (value: number) => (Number.isInteger(value) ? value : ''),
-      },
+      max: (value: { max: number }) => value.max + 1,
     },
     yAxis: {
       name: 'Distance',
@@ -62,7 +67,9 @@ export default function DistanceChart(props: DistanceProps) {
         top: 0,
         z: 10,
         text: ['Early','Late'],
-        dimension: 4,
+        min: -1,
+        max: 1,
+        dimension: 'degree_of_misalignment',
         inRange: {
             color: [LateColor, OnTimeColor, EarlyColor]
         }
@@ -72,7 +79,7 @@ export default function DistanceChart(props: DistanceProps) {
         name: 'DistanceBar',
         type: 'bar',
         encode: {
-          x: 'barIndex',
+          x: 'fixedIndex',
           y: 'distance'
         },
         animation: false,
@@ -80,7 +87,7 @@ export default function DistanceChart(props: DistanceProps) {
       {
         name: 'DistanceLine',
         encode: {
-          x: 'barIndex',
+          x: 'fixedIndex',
           y: 'distance',
         },
         type: 'line',
