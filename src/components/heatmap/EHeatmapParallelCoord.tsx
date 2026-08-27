@@ -76,7 +76,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                         xAxisIndex: 1,
                         yAxisIndex: 1,
                         data: [
-                            [pair.n,1],[pair.f_n,0]
+                            [pair.n + 0.5,1],[pair.f_n + 0.5,0]
                         ],
                         lineStyle: { width: 1.5 },
                         color: getColor(pair.d_o_g),

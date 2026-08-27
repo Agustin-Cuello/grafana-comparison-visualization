@@ -6,7 +6,10 @@ import { DistanceProps } from '../../types';
 export default function DistanceChart(props: DistanceProps) {
   const option = {
     dataset:{
-        source: props.Distance
+        source: props.Distance.map(point => ({
+          ...point,
+          barIndex: point.index + 0.5,
+        }))
     },
     tooltip: {
       trigger: 'axis',
@@ -37,8 +40,11 @@ export default function DistanceChart(props: DistanceProps) {
       name: 'Time',
       type: 'value',
       nameLocation: 'middle',
-      min: 'dataMin',
-      max: 'dataMax',
+      min: 0,
+      max: (value: { max: number }) => value.max + 0.5,
+      axisLabel: {
+        formatter: (value: number) => (Number.isInteger(value) ? value : ''),
+      },
     },
     yAxis: {
       name: 'Distance',
@@ -66,7 +72,7 @@ export default function DistanceChart(props: DistanceProps) {
         name: 'DistanceBar',
         type: 'bar',
         encode: {
-          x: 'index',
+          x: 'barIndex',
           y: 'distance'
         },
         animation: false,
@@ -74,7 +80,7 @@ export default function DistanceChart(props: DistanceProps) {
       {
         name: 'DistanceLine',
         encode: {
-          x: 'index',
+          x: 'barIndex',
           y: 'distance',
         },
         type: 'line',
