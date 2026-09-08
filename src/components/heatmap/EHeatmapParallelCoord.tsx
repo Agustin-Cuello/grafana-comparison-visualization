@@ -8,6 +8,7 @@ type auxProps = {
     refHmapConfig: HeatmapConfig[];
     targetHmapConfig: HeatmapConfig[];
     warpingPairs: WarpingPair[];
+    textColor: string;
 }
 
 function getColor(value: number){
@@ -26,9 +27,9 @@ function getColor(value: number){
     return "rgb("+red+","+green+","+blue+")";
 }
 
-export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, warpingPairs}: auxProps){
-    const refVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(refHmapConfig.length)));
-    const targetVisualMapColumns = Math.max(1, Math.ceil(Math.sqrt(targetHmapConfig.length)));
+export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, warpingPairs, textColor}: auxProps){
+    const refVisualMapSpacing = 13 / Math.max(refHmapConfig.length, 1);
+    const targetVisualMapSpacing = 13 / Math.max(targetHmapConfig.length, 1);
     const warpingValues = warpingPairs.map((pair) => pair.d_o_g);
     const warpingMin = Math.min(...warpingValues);
     const warpingMax = Math.max(...warpingValues);
@@ -48,6 +49,19 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                         yAxisIndex: 0,
                         data: config.data.map((value, index) => [index, config.name, value]),
                         animation: false,
+                        emphasis: {
+                            itemStyle: {
+                                borderColor: textColor,
+                                borderWidth: 0.5,
+                                shadowBlur: 10,             // Sombra para dar efecto de elevación
+                                shadowColor: 'rgba(0,0,0,0.5)'
+                            },
+                        },
+                        blur: {
+                            itemStyle: {
+                                opacity: 0.15               // Mantiene el contexto atenuando el resto
+                            }
+                        },
                         tooltip: {
                             trigger: 'item',
                             formatter: function(params: any){
@@ -58,7 +72,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                             }
                         }
                     }));
-    }, [refHmapConfig]);
+    }, [refHmapConfig, textColor]);
 
     const getTargetHmap = useMemo(() => {
         return targetHmapConfig.map((config) => ({            
@@ -68,6 +82,12 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                         yAxisIndex: 2,
                         data: config.data.map((value, index) => [index, config.name, value]),
                         animation: false,
+                        emphasis: {
+                            itemStyle: {
+                                borderColor: textColor,
+                                borderWidth: 1,
+                            },
+                        },
                         tooltip: {
                             trigger: 'item',
                             formatter: function(params: any){
@@ -78,7 +98,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                             }
                         }
                     }));
-    }, [targetHmapConfig]);
+    }, [targetHmapConfig, textColor]);
 
     const getWarpingChart = useMemo(() => {
         return warpingPairs.map((pair) => ({
@@ -107,8 +127,9 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     realtime: false,
                     show: true,
                     orient: 'horizontal',
-                    left: (15*Math.abs((config.id % refVisualMapColumns)) + 15).toString() + '%',
-                    top: (10 * Math.floor(config.id / refVisualMapColumns)).toString() + '%',
+                    textStyle: { color: textColor },
+                    left: '15%',
+                    top: (2 + refVisualMapSpacing * config.id).toString() + '%',
                     text: ["",config.name],
                     inRange: {
                     color: exampleScales[config.scaleIndex].scale,
@@ -117,7 +138,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     return value;
                     }
                 }));
-    }, [refHmapConfig]);
+    }, [refHmapConfig, textColor]);
 
     const getTargetVisualMaps = useMemo(() => {
         return targetHmapConfig.map((config) => ({
@@ -130,8 +151,9 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                     realtime: false,
                     show: true,
                     orient: 'horizontal',
-                    left: (15 * Math.abs((config.id % targetVisualMapColumns) - Math.min(targetVisualMapColumns - 1, 4)) + 15).toString() + '%',
-                    bottom: (10 * Math.floor(config.id / targetVisualMapColumns)).toString() + '%',
+                    textStyle: { color: textColor },
+                    left: '15%',
+                    bottom: (2 + targetVisualMapSpacing * config.id).toString() + '%',
                     text: ["",config.name],
                     inRange: {
                         color: exampleScales[config.scaleIndex].scale,
@@ -140,7 +162,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                         return value;
                     }
                 }))
-    }, [targetHmapConfig])
+    }, [targetHmapConfig, textColor])
 
     const getWarpingLegendVisualMap = useMemo(() => {
         return {
@@ -153,6 +175,7 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
             realtime: false,
             show: true,
             orient: 'vertical',
+            textStyle: { color: textColor },
             left: '2%',
             top: '36%',
             text: ['Early', 'Late'],
@@ -162,12 +185,13 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                 color: warpingColorScale,
             },
         };
-    }, [warpingMin, warpingMax, warpingColorScale]);
+    }, [warpingMin, warpingMax, warpingColorScale, textColor]);
 
     const getOption = useMemo(() => {
         if(getRefHmap.length > 0 && getTargetHmap.length > 0 && getWarpingChart.length > 0){
             return ({
                 tooltip: {},
+                textStyle: { color: textColor },
                 grid: [
                     { top: '17%', height: '25%' },
                     { top: '36%', height: '25%'},
@@ -177,19 +201,19 @@ export default function EHeatmapParallelCoord({refHmapConfig, targetHmapConfig, 
                 xAxis: [
                     {gridIndex: 0, type: 'category', data: getRefHmap[0]?.data.map((_, index) => index), axisLabel: {show: false}},
                     {gridIndex: 1, type: 'value', min: 0, max: getWarpingChart.length, splitLine:{show:false}, axisLabel: {show: false}},
-                    {gridIndex: 2, type: 'category', data: getTargetHmap[0]?.data.map((_, index) => index)}
+                    {gridIndex: 2, type: 'category', data: getTargetHmap[0]?.data.map((_, index) => index), axisLabel: { color: textColor }}
                 ],
                 yAxis: [
-                    {gridIndex: 0, type: 'category'},
-                    {gridIndex: 1, type: 'category', data: ['Target', 'Reference']},
-                    {gridIndex: 2, type: 'category'}
+                    {gridIndex: 0, type: 'category', axisLabel: { color: textColor }},
+                    {gridIndex: 1, type: 'category', data: ['Target', 'Reference'], axisLabel: { color: textColor }},
+                    {gridIndex: 2, type: 'category', axisLabel: { color: textColor }}
                 ],
                 visualMap: [...getRefVisualMaps, ...getTargetVisualMaps, getWarpingLegendVisualMap],
                 series: [...getRefHmap, ...getTargetHmap, ...getWarpingChart]
             } as Object);
         }
         return null;
-    }, [getRefVisualMaps, getTargetVisualMaps, getWarpingLegendVisualMap, getRefHmap, getTargetHmap, getWarpingChart]);    
+    }, [getRefVisualMaps, getTargetVisualMaps, getWarpingLegendVisualMap, getRefHmap, getTargetHmap, getWarpingChart, textColor]);    
 
     return (<>
     {getOption && <div style={{ width: "100%", height: "100%" }}>

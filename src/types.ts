@@ -26,10 +26,12 @@ export interface DistanceProps {
   Distance: ComparisonResult;
   height: number;
   width: number;
+  textColor: string;
 }
 
 export interface MisalignmentProps {
   Misalignment: ComparisonResult;
   height: number;
   width: number;
+  textColor: string;
 }

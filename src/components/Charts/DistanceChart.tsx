@@ -35,8 +35,14 @@ export default function DistanceChart(props: DistanceProps) {
         ].join('<br/>');
       },
     },
+    textStyle: {
+      color: props.textColor,
+    },
     legend: {
       data: ['Distance'],
+      textStyle: {
+        color: props.textColor,
+      },
     },
     grid: {
       left: 12,
@@ -48,6 +54,9 @@ export default function DistanceChart(props: DistanceProps) {
       name: 'Time',
       type: 'value',
       nameLocation: 'middle',
+      nameTextStyle: {
+        color: props.textColor,
+      },
       min: 0,
       max: (value: { max: number }) => value.max + 1,
     },
@@ -56,8 +65,12 @@ export default function DistanceChart(props: DistanceProps) {
       type: 'value',
       nameLocation: 'middle',
       nameGap: 28,
+      nameTextStyle: {
+        color: props.textColor,
+      },
       axisLabel: {
         margin: 8,
+        color: props.textColor,
       },
     },
     visualMap: {
@@ -67,6 +80,9 @@ export default function DistanceChart(props: DistanceProps) {
         top: 0,
         z: 10,
         text: ['Early','Late'],
+        textStyle: {
+          color: props.textColor,
+        },
         min: -1,
         max: 1,
         dimension: 'degree_of_misalignment',

@@ -1,38 +1,39 @@
 import React from 'react';
-import { PanelData, PanelProps } from '@grafana/data';
+import { PanelProps } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
 
 import DistanceChart from '../Charts/DistanceChart';
 import MisalignmentChart from '../Charts/MisalignmentChart';
 import HeatmapParallelCoord  from "../heatmap/HeatmapParallelCoord";
 
-import { KarlPearsonComparator } from "../../utils/comparators/KarlPearsonComparator";
-import type { TimeSeries } from "../../types/TSComparator.types";
-import type { TableData } from "../../types/TableData.types";
+import { compareTimeSeries } from "../../application/compareTimeSeries";
+import { createDefaultComparator } from "../../application/defaultComparator";
+
+import { frameToTimeSeries } from "../../infraestructure/frameToTimeSeries";
+import { frameToTableData } from "../../infraestructure/frameToTableData";
+
 
 export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
+  const theme = useTheme2();
   const referenceFrame = data.series[0];
   const targetFrame = data.series[1];
 
-  if (!referenceFrame || !targetFrame) {
-    return (
-      <div style={{ width, height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        This panel requires at least two time series.
-      </div>
-    );
-  }
-
   //Data processed for comparison
-  const referenceSeries = React.useMemo(() => frameToTimeSeries(referenceFrame), [referenceFrame]);
+  const referenceSeries = React.useMemo(
+    () => frameToTimeSeries(referenceFrame), 
+    [referenceFrame]
+  );
   const targetSeries = React.useMemo(() => frameToTimeSeries(targetFrame), [targetFrame]);
+  const seriesRowCount = referenceSeries.length;
+  const widthMultiplier = Math.ceil(seriesRowCount/200);
 
   //Data processed for display
   const referenceSeriesTD = React.useMemo(() => frameToTableData(referenceFrame), [referenceFrame]);
   const targetSeriesTD = React.useMemo(() => frameToTableData(targetFrame), [targetFrame]);
 
   const result = React.useMemo(() => {
-    const comparator = new KarlPearsonComparator();
-    console.log("Calculado comparación entre series");
-    return comparator.compare(referenceSeries, targetSeries);
+    const comparator = createDefaultComparator();
+    return compareTimeSeries(comparator, referenceSeries, targetSeries);
   }, [referenceSeries, targetSeries]);
 
   return (
@@ -41,75 +42,31 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
       <div style={{ width: width, height: height }}>
         <DistanceChart
           Distance={result}
-          height = {height*1.25}
-          width = {width}
-        />
-      </div>
-      
-      <div style={{ width: width, height: height}}>
-        <MisalignmentChart
-          Misalignment={result}
-          height = {height*1.25}
-          width = {width}
+          height = {height*1.1}
+          width = {width*widthMultiplier}
+          textColor={theme.colors.text.primary}
         />
       </div>
 
-      <div style={{ width: width, height: height*1.5 }}>
+      <div style={{height: height/12 }}></div>
+      
+      <div>
+        <MisalignmentChart
+          Misalignment={result}
+          height = {height*1.1}
+          width = {width*widthMultiplier}
+          textColor={theme.colors.text.primary}
+        />
+      </div>
+
+      <div style={{ width: width, height: height*1.5*widthMultiplier, border: "1px solid " + theme.colors.border, marginTop: "10%"}}>
         <HeatmapParallelCoord
             reference={referenceSeriesTD}
             target={targetSeriesTD}
             source={result}
+            textColor={theme.colors.text.primary}
         />
       </div>
     </div>
   );
 };
-
-function frameToTimeSeries(frame: PanelData["series"][number]): TimeSeries {
-  const timeField = frame.fields.find(f => f.type === "time");
-  const valueFields = frame.fields.filter(f => f !== timeField);
-
-  if (!timeField || valueFields.length === 0) {
-    return [];
-  }
-
-  const rows: number[][] = [];
-
-  for (let i = 0; i < frame.length; i++) {
-    const values = valueFields.map(f => Number(f.values.get(i)));
-
-    // push only the value columns (remove the timestamp column)
-    rows.push(values);
-  }
-
-  return rows as TimeSeries;
-}
-
-function frameToTableData(frame: PanelData["series"][number]): TableData {
-  const timeField = frame.fields.find(f => f.type === "time");
-  const valueFields = frame.fields.filter(f => f !== timeField);
-
-  if (!timeField || valueFields.length === 0) {
-    return { headers: [], data: [] } as TableData;
-  }
-
-  const headers = valueFields.map(f => f.name || '');
-  const data: string[][] = [];
-
-  for (let i = 0; i < frame.length; i++) {
-    const row: string[] = [];
-    // all value columns (exclude time)
-    for (const vf of valueFields) {
-      row.push(String(vf.values.get(i)));
-    }
-    data.push(row);
-  }
-
-  return {
-    headers,
-    data,
-  } as TableData;
-}
-
-
-

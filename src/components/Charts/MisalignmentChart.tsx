@@ -24,8 +24,14 @@ export default function MisalignmentChart( props: MisalignmentProps ) {
         ].join('<br/>');
       },
     },
+    textStyle: {
+      color: props.textColor,
+    },
     legend: {
       data: ['Misalignment'],
+      textStyle: {
+        color: props.textColor,
+      },
     },
     grid: {
       left: 12,
@@ -38,6 +44,9 @@ export default function MisalignmentChart( props: MisalignmentProps ) {
       name: 'Time',
       type: 'value',
       nameLocation: 'middle',
+      nameTextStyle: {
+        color: props.textColor,
+      },
       min: 'dataMin',
       max: 'dataMax',
       axisLine: {
@@ -50,9 +59,13 @@ export default function MisalignmentChart( props: MisalignmentProps ) {
       name: 'Misalignment',
       type: 'value',
       nameLocation: 'middle',
+      nameTextStyle: {
+        color: props.textColor,
+      },
 
       axisLabel: {
         formatter: (value: number) => (value === 0 ? `{zero|${value}}` : `${value}`),
+        color: props.textColor,
         rich: {
           zero: {
             color: 'orange',

@@ -1,8 +1,8 @@
 import { PanelPlugin } from '@grafana/data';
 import { PanelOptions } from './types';
-import { MatrixPanel } from './components/';
+import { InitialValidator } from './components';
 
-export const plugin = new PanelPlugin<PanelOptions>(MatrixPanel).setPanelOptions((builder) => {
+export const plugin = new PanelPlugin<PanelOptions>(InitialValidator).setPanelOptions((builder) => {
   return builder
     .addTextInput({
       path: 'url',

@@ -9,6 +9,7 @@ type HeatmapParallelProps = {
     reference: TableData;
     target: TableData;
     source: VisEntry[];
+    textColor: string;
 }
 
 function initializeHeatmap(table: TableData){
@@ -27,7 +28,7 @@ function initializeHeatmap(table: TableData){
         });
 }
 
-export default function HeatmapParallelCoord({reference, target, source}: HeatmapParallelProps) {
+export default function HeatmapParallelCoord({reference, target, source, textColor}: HeatmapParallelProps) {
     const [refHmapConfig, setRefHmapConfig] = useState<HeatmapConfig[]>([]);
     const [targetHmapConfig, setTargetHmapConfig] = useState<HeatmapConfig[]>([]);
     const [wapingPairs, setWarpingPairs] = useState<WarpingPair[]>([]);
@@ -66,7 +67,7 @@ export default function HeatmapParallelCoord({reference, target, source}: Heatma
                     <button className="toggleHeatmapOptions" onClick={toggleTargetOps}>Target heatmap options</button>
                     <HeatmapOptions toggled={toggledTargetOps} hmapConfig={targetHmapConfig} setHmapConfig={setTargetHmapConfig}/>
                 </div>
-                <EHeatmapParallelCoord refHmapConfig={refHmapConfig} targetHmapConfig={targetHmapConfig} warpingPairs={wapingPairs} />
+                <EHeatmapParallelCoord refHmapConfig={refHmapConfig} targetHmapConfig={targetHmapConfig} warpingPairs={wapingPairs} textColor={textColor} />
             </div>
         )}
     </>)
