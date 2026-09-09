@@ -13,7 +13,7 @@ import { frameToTimeSeries } from "../../infraestructure/frameToTimeSeries";
 import { frameToTableData } from "../../infraestructure/frameToTableData";
 
 
-export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
+export const DataComparisonPanel: React.FC<PanelProps> = ({ data, width, height }) => {
   const theme = useTheme2();
   const referenceFrame = data.series[0];
   const targetFrame = data.series[1];
@@ -23,18 +23,29 @@ export const MatrixPanel: React.FC<PanelProps> = ({ data, width, height }) => {
     () => frameToTimeSeries(referenceFrame), 
     [referenceFrame]
   );
-  const targetSeries = React.useMemo(() => frameToTimeSeries(targetFrame), [targetFrame]);
-  const seriesRowCount = referenceSeries.length;
-  const widthMultiplier = Math.ceil(seriesRowCount/200);
+
+  const targetSeries = React.useMemo(
+    () => frameToTimeSeries(targetFrame), 
+    [targetFrame]
+  );
 
   //Data processed for display
-  const referenceSeriesTD = React.useMemo(() => frameToTableData(referenceFrame), [referenceFrame]);
-  const targetSeriesTD = React.useMemo(() => frameToTableData(targetFrame), [targetFrame]);
+  const referenceSeriesTD = React.useMemo(
+    () => frameToTableData(referenceFrame), 
+    [referenceFrame]
+  );
+  const targetSeriesTD = React.useMemo(
+    () => frameToTableData(targetFrame), 
+    [targetFrame]
+  );
 
   const result = React.useMemo(() => {
     const comparator = createDefaultComparator();
     return compareTimeSeries(comparator, referenceSeries, targetSeries);
   }, [referenceSeries, targetSeries]);
+
+  const seriesRowCount = referenceSeries.length;
+  const widthMultiplier = Math.ceil(seriesRowCount/200);
 
   return (
   

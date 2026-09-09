@@ -1,7 +1,7 @@
 import React from 'react';
 import { PanelProps } from '@grafana/data';
 
-import { MatrixPanel } from "./Overview";
+import { DataComparisonPanel } from "./Overview";
 
 export const InitialValidator: React.FC<PanelProps> = (props) => {
   const { data, width, height } = props;
@@ -17,7 +17,7 @@ export const InitialValidator: React.FC<PanelProps> = (props) => {
   }
 
   return (
-    <MatrixPanel
+    <DataComparisonPanel
       {...props}
     />
   );
